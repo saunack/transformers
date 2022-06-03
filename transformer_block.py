@@ -7,12 +7,17 @@ def TransformerBlock(nn.Module):
 				embed_size=512,
 				heads=8,
 				dropout=0.1,
+				forward_expansion=4,
 				):
 		super(TransformerBlock).__init__()
 
 		self.att = MultiHeadAttention(embed_size, heads=heads)
 		self.dropout = nn.Dropout(dropout)
-		self.ffn = nn.Linear(embed_size, embed_size)
+		self.ffn = nn.Sequential(
+						nn.Linear(embed_size, embed_size*forward_expansion),
+						nn.ReLu(),
+						nn.Linear(embed_size*forward_expansion, embed_size)
+					)
 
 	def forward(self, query, key, value, mask=None):
 		x = self.att(query, key, value, mask=mask)
