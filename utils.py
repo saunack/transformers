@@ -1,8 +1,10 @@
 import torch
 
 
-def get_positional_embedding(self, N, embed_size):
+def get_positional_embedding(self, N, embed_size, device='cuda'):
     """
+    Positional sine and cosine embeddings
+    Section 3.5 of the paper
     PE(pos,2i) = sin(pos/10000^2i/d_model )
     PE(pos,2i+1) = cos(pos/10000^ 2i/d_model )
     for i in [0,d_model)
@@ -28,3 +30,7 @@ def get_positional_embedding(self, N, embed_size):
     positional[:,even_index] = torch.sin(positional[:,even_index])
     positional[:,odd_index] = torch.cos(positional[:,odd_index])
     return positional
+
+
+def create_mask(self, N, embed_size):
+    return torch.tril((N,embed_size))

@@ -2,6 +2,10 @@ import torch
 import torch.nn as nn
 
 def MultiHeadAttention(nn.Module):
+	"""
+	multi head attention component
+	section 3.2.1, 3.2.2, Figure 2 of the paper
+	"""
 	def __init__(self, embed_size, heads=8):
 		super(MultiHeadAttention).__init__()
 		self.embed_size = embed_size

@@ -5,6 +5,10 @@ from transformer_block import TransformerBlock
 from utils import get_positional_embedding
 
 def Decoder(nn.Module):
+    """
+    Decoder section of the transformer paper
+    Section 3.1, 3.3, 3.4, Figure 2 of the paper
+    """
     def __init__(super, 
                 vocab_size,
                 embed_size=512,

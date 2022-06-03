@@ -5,6 +5,10 @@ from transformer_block import TransformerBlock
 from utils import get_positional_embedding
 
 def Encoder(nn.Module):
+    """
+    Encoder section of the transformer paper
+    Section 3.1, 3.3, 3.4, Figure 2 of the paper
+    """
     def __init__(self,
                 vocab_size, 
                 embed_size=512,
@@ -22,7 +26,7 @@ def Encoder(nn.Module):
         self.device = device
 
 
-    def forward(self, x, mask):
+    def forward(self, x, mask=None):
         # add positional encodings
         embedding = self.word_embedding(x)
         N = embedding.shape[-2]

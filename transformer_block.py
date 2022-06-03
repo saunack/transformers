@@ -3,6 +3,10 @@ import torch.nn as nn
 from attention import MultiHeadAttention
 
 def TransformerBlock(nn.Module):
+	"""
+	Repeating transformer components in encoder and decoder module
+	section 3.1 and 3.2, Figure 1
+	"""
 	def __init__(super, 
 				embed_size=512,
 				heads=8,
