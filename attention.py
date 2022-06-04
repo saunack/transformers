@@ -1,18 +1,18 @@
 import torch
 import torch.nn as nn
 
-def MultiHeadAttention(nn.Module):
+class MultiHeadAttention(nn.Module):
 	"""
 	multi head attention component
 	section 3.2.1, 3.2.2, Figure 2 of the paper
 	"""
 	def __init__(self, embed_size, heads=8):
-		super(MultiHeadAttention).__init__()
+		super(MultiHeadAttention, self).__init__()
 		self.embed_size = embed_size
 		self.heads = heads
 		self.head_dims = embed_size//heads
 
-		assert(self.head*self.head_dims == self.embed_size)
+		assert(self.heads*self.head_dims == self.embed_size)
 
 		# creating the layers
 
@@ -31,12 +31,13 @@ def MultiHeadAttention(nn.Module):
 		value: always equal to key dimensions
 		"""
 		N = query.shape[0]
-		query_len, key_len, value_len = query.shape[-1], key.shape[-1], value.shape[-1]
+		# input shapes are N * tokens(seq_len) * embed_size
+		query_len, key_len, value_len = query.shape[-2], key.shape[-2], value.shape[-2]
 
 		# pass through projection
-		q = self.query(query)
-		k = self.key(key)
-		v = self.value(value)
+		q = self.queries(query)
+		k = self.keys(key)
+		v = self.values(value)
 
 		# logical separation via creation of separate heads
 		# reference: https://towardsdatascience.com/transformers-explained-visually-part-3-multi-head-attention-deep-dive-1c1ff1024853
@@ -50,8 +51,8 @@ def MultiHeadAttention(nn.Module):
 		"""
 
 		q = q.reshape(N, self.heads, query_len, self.head_dims)
-		k = q.reshape(N, self.heads, key_len, self.head_dims)
-		v = q.reshape(N, self.heads, value_len, self.head_dims)
+		k = k.reshape(N, self.heads, key_len, self.head_dims)
+		v = v.reshape(N, self.heads, value_len, self.head_dims)
 
 		
 		# scaled dot product attention
@@ -65,15 +66,15 @@ def MultiHeadAttention(nn.Module):
 		
 
 		if mask is not None:
-            attention = attention.masked_fill(mask == 0, float("-1e20"))
+			attention = attention.masked_fill(mask == 0, float("-1e20"))
 
-        attention = torch.softmax(attention, dim=-1)
+		attention = torch.softmax(attention, dim=-1)
 
 		# attention: (N, heads, query_length, key_length)
 		# v: (N, heads, value_length, head_dims)
 		# output: (N, heads, query_length, head_dims)
-        output = torch.einsum('nhqk,nhkd->nhqd',attention,v)
-        output = output.reshape(N, self.heads, quer_len, embed_size)
+		output = torch.einsum('nhqk,nhkd->nhqd',attention,v)
+		output = output.reshape(N, query_len, self.embed_size)
 
-        return self.linear(output)
+		return self.linear(output)
 

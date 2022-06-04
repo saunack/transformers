@@ -1,7 +1,7 @@
 import torch
 
 
-def get_positional_embedding(self, N, embed_size, device='cuda'):
+def get_positional_embedding(N, embed_size, device='cuda'):
     """
     Positional sine and cosine embeddings
     Section 3.5 of the paper
@@ -29,8 +29,12 @@ def get_positional_embedding(self, N, embed_size, device='cuda'):
     odd_index = torch.arange(1,embed_size+1,2)
     positional[:,even_index] = torch.sin(positional[:,even_index])
     positional[:,odd_index] = torch.cos(positional[:,odd_index])
-    return positional
+    return positional.to(device)
 
 
-def create_mask(self, N, embed_size):
-    return torch.tril((N,embed_size))
+def create_autogression_mask(tok_length, device='cuda'):
+    # create a lower triangular square matrix of tok_length * tok_length
+    # required output shape: 1 * 1 * tok_length * tok_length or tok_length * tok_length
+    # unsqueezes for the first 2 two dimensions are not required
+    # return torch.tril(torch.ones((tok_length,tok_length))).unsqueeze(0).unsqueeze(0)..to(device)
+    return torch.tril(torch.ones((tok_length,tok_length))).to(device)
