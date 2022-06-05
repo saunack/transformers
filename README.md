@@ -1,8 +1,14 @@
-# Coding Transformers
+# Coding Transformers from scratch
 
 This is a recreation of the code for transformers as described in the seminal paper by Google in 2018. References to each section in the paper for each component are mentioned in the code wherever needed. 
 
 To test that the code works properly, please run `test.py` in an environment with `pytorch` installed.
+
+## What's included
+- Positional embeddings
+- Multi head attention
+- Transformer blocks
+- Autogression
 
 ## What's missing (todo)
 - Tokenization
